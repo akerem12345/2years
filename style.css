@@ -5,7 +5,7 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  background: linear-gradient(180deg, #b1e0f6 0%, #dcdcdc 100%);
+  background: linear-gradient(180deg, #eddfaf 0%, #f7dd8f 100%);
   background-attachment: fixed;
   font-family: 'Lora', serif;
   color: #37474f;
@@ -130,8 +130,8 @@ header {
   align-items: center;
   opacity: 1;
   visibility: visible;
-  transition: opacity 1s cubic-bezier(0.25, 1, 0.5, 1), 
-              visibility 1s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: opacity 1s cubic-bezier(0.25, 1, 0.5, 1),
+    visibility 1s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .intro-overlay.fade-out {
@@ -156,9 +156,9 @@ header {
   justify-content: center;
   align-items: center;
   outline: none;
-  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), 
-              box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
-              background-color 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+    box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+    background-color 0.3s ease;
   box-shadow: 0 5px 15px rgba(255, 255, 255, 0.05);
 }
 
