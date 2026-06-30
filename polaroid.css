@@ -1,0 +1,117 @@
+/* Polaroid Card Design System */
+
+.polaroid-card-wrapper {
+  display: inline-block;
+  perspective: 1000px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.polaroid-card {
+  background: #ffffff;
+  padding: 16px 16px 24px 16px;
+  border-radius: 2px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08), 0 2px 5px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform-style: preserve-3d;
+  will-change: transform, box-shadow;
+  box-sizing: border-box;
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
+}
+
+.polaroid-card:not(.modal-card):hover {
+  transform: rotate(0deg) scale(1.06) translateY(-5px) !important;
+  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.15), 0 8px 15px rgba(0, 0, 0, 0.08);
+  z-index: 10;
+}
+
+.polaroid-image-container {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background-color: #f7f7f7;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  margin-bottom: 16px;
+}
+
+.polaroid-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: contrast(1.02) saturate(1.02);
+}
+
+.polaroid-caption {
+  font-family: 'Caveat', cursive;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #2c2c2c;
+  text-align: center;
+  margin: 0;
+  padding: 0 4px;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.25;
+  user-select: none;
+}
+
+/* Lightbox Overlay Styles */
+
+.lightbox-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1),
+    backdrop-filter 0.5s cubic-bezier(0.25, 1, 0.5, 1),
+    visibility 0.5s;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lightbox-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  cursor: zoom-out;
+}
+
+/* Modal Polaroid Card */
+
+.modal-card {
+  position: fixed !important;
+  margin: 0 !important;
+  z-index: 1001;
+  pointer-events: auto;
+  transform-origin: center center;
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1),
+    box-shadow 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35), 0 10px 20px rgba(0, 0, 0, 0.15);
+  cursor: default;
+}
+
+.modal-card.expanded {
+  width: 90vw !important;
+  max-width: 480px !important;
+  height: auto !important;
+}
+
+.modal-card.expanded .polaroid-caption {
+  font-size: 2rem;
+  /* scales text size beautifully when expanded */
+  padding: 0 10px;
+}

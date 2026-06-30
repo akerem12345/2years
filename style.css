@@ -1,0 +1,173 @@
+/* Typography and Base Styles */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #b1e0f6 0%, #dcdcdc 100%);
+  background-attachment: fixed;
+  font-family: 'Lora', serif;
+  color: #37474f;
+  box-sizing: border-box;
+}
+
+/* Header Styles */
+
+header {
+  width: 100%;
+  padding: 40px 20px 20px 20px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.header-title {
+  font-family: 'Lora', serif;
+  font-weight: 700;
+  font-size: 3rem;
+  margin: 0;
+  color: #1a237e;
+  letter-spacing: -0.5px;
+}
+
+/* Grid Layout */
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 120px;
+  row-gap: 80px;
+  max-width: 960px;
+  margin: 40px auto;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+/* Alternating positioning for grid columns on desktop */
+
+.polaroid-card-wrapper:nth-child(2n+1) {
+  justify-self: end;
+}
+
+.polaroid-card-wrapper:nth-child(2n) {
+  justify-self: start;
+}
+
+/* Footer Styles */
+
+.footer-container {
+  max-width: 700px;
+  margin: 80px auto 60px auto;
+  padding: 0 20px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.footer-title {
+  font-family: 'Lora', serif;
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: #1a237e;
+  margin: 0 0 16px 0;
+}
+
+.footer-text {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #546e7a;
+  margin: 0;
+}
+
+/* Responsive Design for Mobile Devices */
+
+@media (max-width: 768px) {
+  .header-title {
+    font-size: 2.2rem;
+  }
+
+  .grid-container {
+    grid-template-columns: 1fr;
+    row-gap: 60px;
+    column-gap: 0;
+    padding: 20px;
+    margin: 20px auto;
+  }
+
+  .polaroid-card-wrapper {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    justify-self: center !important;
+  }
+
+  .footer-container {
+    margin-top: 50px;
+    margin-bottom: 40px;
+  }
+
+  .footer-title {
+    font-size: 1.5rem;
+  }
+
+  .footer-text {
+    font-size: 1rem;
+  }
+}
+
+/* Intro Overlay Styles */
+
+.intro-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000000;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 1s cubic-bezier(0.25, 1, 0.5, 1), 
+              visibility 1s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.intro-overlay.fade-out {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Squircle Start Button */
+
+.start-button {
+  width: 120px;
+  height: 120px;
+  background-color: #000000;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  border-radius: 35px;
+  font-family: 'Lora', serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  outline: none;
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), 
+              box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+              background-color 0.3s ease;
+  box-shadow: 0 5px 15px rgba(255, 255, 255, 0.05);
+}
+
+.start-button:hover {
+  transform: scale(1.06);
+  box-shadow: 0 10px 25px rgba(255, 255, 255, 0.15);
+  background-color: #111111;
+}
+
+.start-button:active {
+  transform: scale(0.98);
+}

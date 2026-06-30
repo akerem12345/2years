@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anı Albümü</title>
+  <!-- Google Fonts: Lora (Serif) and Caveat (Handwriting) with Latin Extended support -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Lora:ital,wght@0,700;1,400&display=swap"
+    rel="stylesheet">
+
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="polaroid.css">
+</head>
+
+<body>
+
+  <!-- Intro Overlay / Gateway Screen -->
+  <div class="intro-overlay" id="intro-overlay">
+    <button class="start-button" id="start-button">Başlat</button>
+  </div>
+
+  <!-- Background Music Audio Element -->
+  <audio id="bg-music" src="music/Married_Life.ogg" loop></audio>
+
+  <!-- Header Section -->
+  <header>
+    <h1 class="header-title">Fotoğraf Albümü</h1>
+  </header>
+  <hr>
+  <!-- Photo Album Grid -->
+  <main class="grid-container" id="album-grid"></main>
+  <hr>
+  <!-- Footer Section -->
+  <footer class="footer-container">
+    <h2 class="footer-title">Dipnot</h2>
+    <p class="footer-text">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore
+      magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+      consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+      Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+  </footer>
+
+  <!-- Lightbox Overlay -->
+  <div class="lightbox-overlay" id="lightbox-overlay"></div>
+
+  <!-- Dynamically load the image list script -->
+  <script src="resources/images.js"></script>
+
+  <!-- Dynamic Album Generation Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const grid = document.getElementById("album-grid");
+      const overlay = document.getElementById("lightbox-overlay");
+      let activeClone = null;
+      let activeOriginalCard = null;
+
+      // Background Music and Intro Screen Logic
+      const introOverlay = document.getElementById("intro-overlay");
+      const startButton = document.getElementById("start-button");
+      const bgMusic = document.getElementById("bg-music");
+
+      // Prevent scrolling while intro screen is active
+      document.body.style.overflow = "hidden";
+
+      startButton.addEventListener("click", () => {
+        // Play background music at 20% volume
+        bgMusic.volume = 0.2;
+        bgMusic.play().catch(err => {
+          console.error("Müzik oynatma başlatılamadı:", err);
+        });
+
+        // Fade out transition for intro overlay
+        introOverlay.classList.add("fade-out");
+
+        // Clean up DOM and restore scroll after fade-out transition completes
+        introOverlay.addEventListener("transitionend", function handler() {
+          introOverlay.removeEventListener("transitionend", handler);
+          introOverlay.remove();
+          document.body.style.overflow = "";
+        });
+      });
+
+      // Safety check in case images array is not loaded
+      if (!window.albumImages || !Array.isArray(window.albumImages)) {
+        return;
+      }
+
+      // Helper function to format filename into a nice caption with Turkish support
+      function formatFilename(filename) {
+        // Find last dot to strip extension
+        const dotIndex = filename.lastIndexOf('.');
+        let name = dotIndex !== -1 ? filename.substring(0, dotIndex) : filename;
+
+        // Replace underscores and hyphens with spaces
+        name = name.replace(/[_-]/g, ' ');
+
+        // Capitalize words using Turkish locale for proper letter casing (e.g. ı -> I, i -> İ)
+        return name.split(' ')
+          .filter(word => word.length > 0)
+          .map(word => word.charAt(0).toLocaleUpperCase('tr-TR') + word.slice(1))
+          .join(' ');
+      }
+
+      // Generate polaroid cards dynamically
+      window.albumImages.forEach((imgFilename, index) => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "polaroid-card-wrapper";
+
+        // Assign desktop row and column position explicitly
+        const row = index + 1;
+        const col = (index % 2) === 0 ? 1 : 2;
+        wrapper.style.gridRow = row;
+        wrapper.style.gridColumn = col;
+
+        const card = document.createElement("div");
+        card.className = "polaroid-card";
+
+        // Generate random rotation angle between -30deg and +30deg (max +-30 degrees)
+        const rotation = (Math.random() * 60) - 30;
+        card.style.transform = `rotate(${rotation.toFixed(1)}deg)`;
+        card.dataset.rotation = rotation.toFixed(1); // Store original rotation for FLIP
+
+        // Image Container for aspect ratio preservation
+        const imgContainer = document.createElement("div");
+        imgContainer.className = "polaroid-image-container";
+
+        const img = document.createElement("img");
+        img.className = "polaroid-image";
+        img.src = `resources/${imgFilename}`;
+        img.alt = formatFilename(imgFilename);
+        img.loading = "lazy";
+
+        // Polaroid Text Caption
+        const caption = document.createElement("p");
+        caption.className = "polaroid-caption";
+        caption.textContent = formatFilename(imgFilename);
+
+        // Assemble the DOM structure
+        imgContainer.appendChild(img);
+        card.appendChild(imgContainer);
+        card.appendChild(caption);
+        wrapper.appendChild(card);
+        grid.appendChild(wrapper);
+
+        // Add Click Event Listener for Lightbox Zoom
+        card.addEventListener("click", () => {
+          openLightbox(card);
+        });
+      });
+
+      // Lightbox Zoom Logic using FLIP (First, Last, Invert, Play) technique
+      function openLightbox(originalCard) {
+        if (activeClone) return;
+
+        activeOriginalCard = originalCard;
+        const firstRect = originalCard.getBoundingClientRect();
+        const rotation = parseFloat(originalCard.dataset.rotation) || 0;
+
+        // Clone the card
+        const clone = originalCard.cloneNode(true);
+        clone.classList.add("modal-card", "expanded");
+
+        // Remove rotation from clone so it renders flat in center layout calculation
+        clone.style.transform = "none";
+
+        // Prepare overlay
+        overlay.style.display = "flex";
+        overlay.appendChild(clone);
+
+        // Get final layout rect in center
+        const lastRect = clone.getBoundingClientRect();
+
+        // Calculate differences (Invert step)
+        const dx = firstRect.left - lastRect.left;
+        const dy = firstRect.top - lastRect.top;
+        const sx = firstRect.width / lastRect.width;
+        const sy = firstRect.height / lastRect.height;
+
+        // Transform clone back to match original size and rotation
+        clone.style.transition = "none";
+        clone.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy}) rotate(${rotation}deg)`;
+
+        // Hide original card
+        originalCard.style.visibility = "hidden";
+
+        // Force layout reflow
+        clone.offsetHeight;
+
+        // Animate to center (Play step)
+        overlay.classList.add("active");
+        clone.style.transition = "transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s cubic-bezier(0.25, 1, 0.5, 1)";
+        clone.style.transform = "translate(0, 0) scale(1) rotate(0deg)";
+
+        // Disable scrolling on background body
+        document.body.style.overflow = "hidden";
+        activeClone = clone;
+
+        // Close logic
+        const closeLightbox = () => {
+          if (!activeClone) return;
+
+          // Transition clone back to the original card's location and rotation
+          clone.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy}) rotate(${rotation}deg)`;
+          overlay.classList.remove("active");
+
+          // Clean up DOM after transition
+          clone.addEventListener("transitionend", function handler() {
+            clone.removeEventListener("transitionend", handler);
+            if (activeClone === clone) {
+              clone.remove();
+              originalCard.style.visibility = "visible";
+              overlay.style.display = "none";
+              document.body.style.overflow = "";
+              activeClone = null;
+              activeOriginalCard = null;
+            }
+          });
+        };
+
+        // Close on clicking outside the card (the overlay)
+        overlay.onclick = (e) => {
+          if (e.target === overlay) {
+            closeLightbox();
+          }
+        };
+      }
+
+      // Close open lightbox immediately on window resize to avoid position calculations glitching
+      window.addEventListener("resize", () => {
+        if (activeClone) {
+          activeClone.remove();
+          if (activeOriginalCard) {
+            activeOriginalCard.style.visibility = "visible";
+          }
+          overlay.classList.remove("active");
+          overlay.style.display = "none";
+          document.body.style.overflow = "";
+          activeClone = null;
+          activeOriginalCard = null;
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
